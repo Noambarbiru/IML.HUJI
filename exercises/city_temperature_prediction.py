@@ -33,8 +33,7 @@ def load_data(filename: str) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    address_of_output = "C:/Users/brnoo/Desktop/output/"
-    address_of_data = "C:/Users/brnoo/Desktop/GitHub/IML.HUJI/datasets/City_Temperature.csv"
+    address_of_data = "City_Temperature.csv"
     np.random.seed(0)
     # Question 1 - Load and preprocessing of city temperature dataset
     X, y = load_data(address_of_data)
@@ -47,7 +46,7 @@ if __name__ == '__main__':
                      title=f"relation of the average daily temperature (Temp) and the `DayOfYear`",
                      width=1000, height=800)
     fig.update_layout(font=dict(size=18))
-    fig.write_image(address_of_output + "Israel-Temp-as-function-of-DayOfYear.png",
+    fig.write_image("Israel-Temp-as-function-of-DayOfYear.png",
                     format="png")
     df_israel["Year"] = df_israel["Year"].astype(int)
 
@@ -57,7 +56,7 @@ if __name__ == '__main__':
                  title=f"Standard Deviation Of The Daily Temperatures For Each Month"
                  , labels={'Temp': 'std of Temp'}, width=1000, height=800)
     fig.update_layout(font=dict(size=18))
-    fig.write_image(address_of_output + "Israel-STD-Temp-as-function-of-Month.png",
+    fig.write_image("Israel-STD-Temp-as-function-of-Month.png",
                     format="png")
 
     # Question 3 - Exploring differences between countries
@@ -68,7 +67,7 @@ if __name__ == '__main__':
                   , title=f"Average Temperature Of Each Month For Different Countries"
                   , labels={'mean': 'average temperature'}, width=1000, height=800)
     fig.update_layout(font=dict(size=18))
-    fig.write_image(address_of_output + "Mean-Temp-as-function-of-Month.png",
+    fig.write_image("Mean-Temp-as-function-of-Month.png",
                     format="png")
 
     # Question 4 - Fitting model for different values of `k`
@@ -85,7 +84,7 @@ if __name__ == '__main__':
                  title=f"Test Error For Each Polynomial Fitting Degree (k)"
                  , labels={'loss': 'test error'}, text='loss', width=1000, height=800)
     fig.update_layout(font=dict(size=18))
-    fig.write_image(address_of_output + "Israel-poly-fitting-test-error-bar.png",
+    fig.write_image("Israel-poly-fitting-test-error-bar.png",
                     format="png")
 
 
@@ -106,5 +105,5 @@ if __name__ == '__main__':
                  title=f"Test Error On Countries Datasets On The Model Of Israel"
                  , labels={'loss': 'test error'}, text='loss', width=1000, height=800)
     fig.update_layout(font=dict(size=18))
-    fig.write_image(address_of_output + "countries-test-error-bar-on-israel-fit-model.png",
+    fig.write_image("countries-test-error-bar-on-israel-fit-model.png",
                     format="png")

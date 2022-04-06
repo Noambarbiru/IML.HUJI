@@ -88,14 +88,13 @@ def feature_evaluation(X: pd.DataFrame, y: pd.Series, output_path: str = ".") ->
 
 
 if __name__ == '__main__':
-    address_of_output = "C:/Users/brnoo/Desktop/out/"
-    address_of_data = "C:/Users/brnoo/Desktop/GitHub/IML.HUJI/datasets/house_prices.csv"
+    address_of_data = "house_prices.csv"
     np.random.seed(0)
     # Question 1 - Load and preprocessing of housing prices dataset
     X, y = load_data(address_of_data)
 
     # Question 2 - Feature evaluation with respect to response
-    feature_evaluation(X, y, address_of_output)
+    feature_evaluation(X, y)
 
     # Question 3 - Split samples into training- and testing sets.
     train_X, train_y, test_X, test_y = split_train_test(X, y, .75)
@@ -137,4 +136,4 @@ if __name__ == '__main__':
                                      legend=dict(x=0, y=1),
                                      font=dict(size=18),
                                      height=800, width=1000))
-    fig.write_image(address_of_output + "mean-loss-of-LS-over-training-set-percentage.png", format="png")
+    fig.write_image("mean-loss-of-LS-over-training-set-percentage.png", format="png")
