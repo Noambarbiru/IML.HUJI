@@ -26,6 +26,7 @@ def load_data(filename: str):
     """
     data = pd.read_csv(filename)
     data = data.dropna(0)
+    data = data.drop_duplicates()
     data["floors"] = data["floors"].astype(int)
     data["zipcode"] = data["zipcode"].astype(int)
     for feature in ["id", "date", "lat", "long"]:
@@ -47,13 +48,11 @@ def load_data(filename: str):
     max_y_renovated = max(data["yr_renovated"])
     data["yr_renovated"].values[data["yr_renovated"].values >= max_y_renovated - 40] = 1
     data["yr_renovated"].values[data["yr_renovated"].values < max_y_renovated - 40] = 0
-
     data.rename(columns={"yr_renovated": "renovated_in_the_last_few_years"}, inplace=True)
 
     data = pd.get_dummies(data, columns=['zipcode'], prefix='zipcode', dtype=int)
 
     data = data.drop_duplicates()
-
     x = data.drop("price", 1)
     y = data["price"]
     return x, y
