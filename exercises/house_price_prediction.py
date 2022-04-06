@@ -44,6 +44,14 @@ def load_data(filename: str):
     data = data[(data["sqft_lot15"] < q_hi_lot15)
                 & (data["sqft_lot"] < q_hi_lot)]
 
+    max_y_renovated = max(data["yr_renovated"])
+    data["yr_renovated"].values[data["yr_renovated"].values >= max_y_renovated - 40] = 1
+    data["yr_renovated"].values[data["yr_renovated"].values < max_y_renovated - 40] = 0
+
+    data.rename(columns={"yr_renovated": "renovated_in_the_last_few_years"}, inplace=True)
+
+    data = pd.get_dummies(data, columns=['zipcode'], prefix='zipcode', dtype=int)
+
     data = data.drop_duplicates()
 
     x = data.drop("price", 1)
@@ -71,6 +79,8 @@ def feature_evaluation(X: pd.DataFrame, y: pd.Series, output_path: str = ".") ->
     sigma_y = np.sqrt(np.var(y))
 
     for feature in X:
+        if feature.startswith("zipcode") or feature.startswith("renovated"):
+            continue
         sigma_x_y = np.cov(X[feature], y)[1][0]
         sigma_x = np.sqrt(np.var(X[feature]))
         f_cov = sigma_x_y / (sigma_x * sigma_y)
