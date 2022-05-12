@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import random
 from typing import Tuple, NoReturn
 from ...base import BaseEstimator
 import numpy as np
@@ -6,6 +8,7 @@ from itertools import product
 
 
 class DecisionStump(BaseEstimator):
+    random.seed(0)
     """
     A decision stump classifier for {-1,1} labels according to the CART algorithm
 
@@ -40,15 +43,14 @@ class DecisionStump(BaseEstimator):
         y : ndarray of shape (n_samples, )
             Responses of input data to fit to
         """
-        threshold = np.inf
-        loss = 1
-        index_of_split = 0
-        sign = 1
+        threshold = []
+        loss = np.inf
+        index_of_split = []
+        sign = []
         for s, i in product([1, -1], range(len(X[0]))):
             th, l = self._find_threshold(X[:, i], y, s)
             if l < loss:
                 threshold, loss, index_of_split, sign = th, l, i, s
-
         self.threshold_, self.j_, self.sign_ = threshold, index_of_split, sign
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
@@ -74,8 +76,9 @@ class DecisionStump(BaseEstimator):
         to or above the threshold are predicted as `sign`
         """
         y = []
-        for x in X:
-            y.append(self.sign_ if x[self.j_] >= self.threshold_ else -1 * self.sign_)
+        x = X[:, self.j_]
+        for sample in x:
+            y.append(self.sign_ if sample >= self.threshold_ else -1 * self.sign_)
         return np.array(y)
 
     def _find_threshold(self, values: np.ndarray, labels: np.ndarray, sign: int) -> Tuple[float, float]:
@@ -108,19 +111,22 @@ class DecisionStump(BaseEstimator):
         For every tested threshold, values strictly below threshold are predicted as `-sign` whereas values
         which equal to or above the threshold are predicted as `sign`
         """
-
         indexes_sorted = np.argsort(values)
         values = values[indexes_sorted]
         labels = labels[indexes_sorted]
-        loss = np.zeros(len(labels))
+        unique_values, indices_list = np.unique(values, return_index=True)
+        loss = np.zeros(len(indices_list))
+        y = np.where(labels > 0, 1, labels)
+        y = np.where(y < 0, -1, y)
 
-        for i in range(len(labels)):
-            half_sign = labels[:i + 1]
-            half_minus_sign = labels[i + 1:]
-            loss[i] += np.abs(np.sum(half_sign[np.sign(half_sign) != sign]))
-            loss[i] += np.abs(np.sum(half_minus_sign[np.sign(half_minus_sign) == sign]))
+        pred = np.ones(len(labels))*sign
+        for j in range(len(indices_list)):
+            i = indices_list[j]
+            pred[:i] = -sign
+            loss[j] = np.sum((np.abs(pred - y)/2)*np.abs(labels))
         ind = np.argmin(loss)
-        return values[ind], loss[ind]/len(values)
+        threshold = unique_values[ind]
+        return threshold, loss[ind]
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """

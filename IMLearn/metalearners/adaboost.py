@@ -50,15 +50,18 @@ class AdaBoost(BaseEstimator):
         """
         self.D_ = np.ones(len(X)) / len(X)
         self.models_ = []
-        self.weights_ = []
+        self.weights_ = np.zeros(self.iterations_)
         for i in range(self.iterations_):
             self.models_.append(self.wl_())
             self.models_[i].fit(X, y * self.D_)
             pred = self.models_[i].predict(X)
-            weighted_false = np.sum([self.D_[j] for j in range(len(y)) if np.sign(y[j]) != np.sign(pred[j])])
-            self.weights_.append(0.5 * np.log((1 / weighted_false) - 1))
-            self.D_ *= np.exp(-1 * self.weights_[i] * pred * y)
+            # p = pred * y
+            # weighted_false = np.sum([self.D_[j] for j in range(len(pred)) if pred[j] != y[j]])
+            weighted_false = np.sum((np.abs(pred-y)/2)*self.D_)
+            self.weights_[i] = 0.5 * np.log((1.0 / weighted_false) - 1.0)
+            self.D_ *= np.exp((-1) * self.weights_[i] * pred * y)
             self.D_ /= np.sum(self.D_)
+
         self.models_ = np.array(self.models_)
         self.weights_ = np.array(self.weights_)
 
