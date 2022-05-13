@@ -118,14 +118,14 @@ class DecisionStump(BaseEstimator):
         loss = np.zeros(len(indices_list))
         y = np.where(labels > 0, 1, labels)
         y = np.where(y < 0, -1, y)
-        pred = np.ones(len(labels))*sign
+        pred = np.ones(len(labels)) * sign
         labels = np.abs(labels)
         for j in range(len(indices_list)):
             i = indices_list[j]
             pred[:i] = -sign
-            p = np.where(pred*y > 0, 0, pred*y)
+            p = np.where(pred * y > 0, 0, pred * y)
             p = np.abs(p)
-            loss[j] = np.sum(labels*p)
+            loss[j] = np.sum(labels * p)
         ind = np.argmin(loss)
         threshold = unique_values[ind]
         return threshold, loss[ind]
@@ -148,4 +148,4 @@ class DecisionStump(BaseEstimator):
             Performance under missclassification loss function
         """
         from ...metrics import misclassification_error
-        return misclassification_error(y, self._predict(X))
+        return misclassification_error(y, self._predict(X), False) / len(y)
