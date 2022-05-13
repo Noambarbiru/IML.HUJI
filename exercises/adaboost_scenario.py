@@ -52,7 +52,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
     fig.add_trace(go.Scatter(x=np.arange(1, n_learners + 1), y=error_train, mode='lines', name="train data error"))
     fig.add_trace(go.Scatter(x=np.arange(1, n_learners + 1), y=error_test, mode='lines', name="test data error"))
     fig.show()
-    fig.write_image("Q1_" + str(noise) + ".png")
 
     # Question 2: Plotting decision surfaces
     T = [5, 50, 100, 250]
@@ -73,7 +72,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
         fig.update_layout(title=rf"$\textbf{{Decision Boundaries For Different Num Of Learners, With {noise} Noise}}$",
                           margin=dict(t=100))
         fig.show()
-        fig.write_image("Q2_" + str(noise) + ".png")
 
         # Question 3: Decision surface of best performing ensemble
         learners_number_for_min_error = error_test.index(min(error_test))
@@ -89,7 +87,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
                                    size=5, colorscale=[custom[0], custom[-1]],
                                    line=dict(color="black", width=1)))])
         fig.show()
-        fig.write_image("Q3_" + str(noise) + ".png")
 
     # Question 4: Decision surface with weighted samples
     D = (adaBoost.D_ / np.max(adaBoost.D_))
@@ -106,7 +103,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000, test_size=
                                            size=D, colorscale=[custom[0], custom[-1]],
                                            line=dict(color="black", width=1)))])
     fig.show()
-    fig.write_image("Q4_" + str(noise) + ".png")
 
 
 if __name__ == '__main__':
