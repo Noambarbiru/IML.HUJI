@@ -32,14 +32,14 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     # and split into training- and testing portions
     x = np.linspace(-1.2, 2, n_samples)
     y_ = (x + 3) * (x + 2) * (x + 1) * (x - 1) * (x - 2)
-    y = y_ + np.random.normal(0, np.sqrt(noise), size=n_samples)
+    y = y_ + np.random.normal(0, noise, size=n_samples)
 
     train_x, train_y, test_x, test_y = split_train_test(pd.DataFrame(x), pd.DataFrame(y), 2 / 3)
     train_x, train_y, test_x, test_y = train_x.to_numpy().reshape((-1,)), train_y.to_numpy().reshape(
         (-1,)), test_x.to_numpy().reshape((-1,)), test_y.to_numpy().reshape((-1,))
     fig = go.Figure(
         layout=go.Layout(
-            title=rf"$\textbf{{y =(x+3)(x+2)(x+1)(x-1)(x-2) + ε, ε ~ N(0, {noise})}}$"))
+            title=rf"$\textbf{{y =(x+3)(x+2)(x+1)(x-1)(x-2) + ε, ε ~ N(0, {noise}^2)}}$"))
     fig.add_trace(go.Scatter(x=x, y=y_, mode='markers', name="true (noiseless) model"))
     fig.add_trace(go.Scatter(x=train_x, y=train_y, mode='markers', name="train set"))
     fig.add_trace(go.Scatter(x=test_x, y=test_y, mode='markers', name="test set"))
@@ -54,7 +54,7 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
         avg_train_error[k], avg_val_error[k] = cross_validate(model, train_x, train_y, mean_square_error)
     fig = go.Figure(
         layout=go.Layout(
-            title=rf"$\textbf{{The Average Training- And Validation Errors As Function Of K (with σ^2 = {noise})}}$"))
+            title=rf"$\textbf{{The Average Training- And Validation Errors As Function Of K (with σ = {noise})}}$"))
     fig.add_trace(go.Scatter(x=k_arr, y=avg_train_error, mode='markers', name="average train error"))
     fig.add_trace(go.Scatter(x=k_arr, y=avg_val_error, mode='markers', name="average validation error"))
     fig.show()
@@ -63,7 +63,7 @@ def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
     k_star = np.argmin(avg_val_error)
     model = PolynomialFitting(k_star).fit(train_x, train_y)
     test_error_k_star = mean_square_error(test_y, model.predict(test_x))
-    # print("For σ^2 = %d, the k who gives the minimum validation error is %d.\nThe error of the model of k = %d on the test is %.2f.\n"
+    # print("For σ = %d, the k who gives the minimum validation error is %d.\nThe error of the model of k = %d on the test is %.2f.\n"
     #       % (noise,k_star, k_star, test_error_k_star))
 
 
