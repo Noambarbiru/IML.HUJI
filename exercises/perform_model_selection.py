@@ -82,11 +82,10 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
     """
     # Question 6 - Load diabetes dataset and split into training and testing portions
     data, target = datasets.load_diabetes(return_X_y=True)
-    index_train = np.random.choice(np.arange(0, len(data)), n_samples, replace=False)
-    train_x, train_y, test_x, test_y = data[index_train], target[index_train], data[~index_train], target[~index_train]
+    train_x, train_y, test_x, test_y = data[:n_samples], target[:n_samples], data[n_samples:], target[n_samples:]
 
     # Question 7 - Perform CV for different values of the regularization parameter for Ridge and Lasso regressions
-    regularization_parameter_ridge = np.linspace(5 * 10 ** -4, 0.1, n_evaluations)
+    regularization_parameter_ridge = np.linspace(10**-5, 1.5, n_evaluations)
     avg_train_error_ridge = np.zeros(n_evaluations)
     avg_val_error_ridge = np.zeros(n_evaluations)
     for i in range(n_evaluations):
@@ -103,7 +102,7 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
                    name="ridge average validation error"))
     fig.show()
 
-    regularization_parameter_lasso = np.linspace(0.01, 2, n_evaluations)
+    regularization_parameter_lasso = np.linspace(10**-5, 1.5, n_evaluations)
     avg_train_error_lasso = np.zeros(n_evaluations)
     avg_val_error_lasso = np.zeros(n_evaluations)
     for i in range(n_evaluations):
